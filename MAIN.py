@@ -37,7 +37,7 @@ def main():
 		# Each element of the list now used to create an instance of a 'Master' class (defined in Master.py)
 		for masterfile in master_list:
 			# Return number of data files linked to a master file:
-			masterpath = "{}{}".format(masterdir, masterfile)
+			masterpath = "{}/{}".format(masterdir, masterfile)
 			parser.add_argument("-t","--totalframes", type=int, default=master.getNumberOfFiles_fast(masterpath),
 			help="Total number of frames to be processed, default all")
 			args = parser.parse_args()
