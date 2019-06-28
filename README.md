@@ -5,3 +5,5 @@ Contain ALL 4 files to run XDS:
 2) master.py
 3) datawell.py
 4) generate_xds.py
+
+I just made some changes to the READ file.
