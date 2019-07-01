@@ -1,8 +1,8 @@
-import argparse, fnmatch, os, h5py
+import argparse, fnmatch, os, h5py, time
 import master
 
 def main():
-
+	time1=time.time()
 	parser = argparse.ArgumentParser(description='Arguments required to process the data: input, beamcenter, distance.')
 
 	parser.add_argument('-i', '--input', type=str, nargs='+', required=True, help='Path of Directory containing HDF5 master file(s)')
@@ -38,14 +38,13 @@ def main():
 		for masterfile in master_list:
 			# Return number of data files linked to a master file:
 			masterpath = "{}/{}".format(masterdir, masterfile)
-			parser.add_argument("-t","--totalframes", type=int, default=master.getNumberOfFiles_fast(masterpath),
-			help="Total number of frames to be processed, default all")
-			args = parser.parse_args()
+			totalframes = master.getNumberOfFiles_fast(masterpath)
 
-			master_class = master.Master(args, masterpath, args.totalframes)
+			master_class = master.Master(args, masterpath, totalframes)
 			master_class.create_and_run_Data_Wells()
 		# We just generated empty directory(ies) named with respect to the master(s) files,
 		# AND returned the path to these directories
-
+	time2 = time.time()
+	print("Total time: {:.1f} s".format(time2-time1))
 if __name__=='__main__':
 	main()
