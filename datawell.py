@@ -1,5 +1,6 @@
-import subprocess, os
+import subprocess, os, re
 from generate_xds import gen_xds_text
+
 
 class Datawell(object):
 	
@@ -10,10 +11,13 @@ class Datawell(object):
 		self.masterpath = masterpath
 		self.args = args
 		
-#		self.setup_datawell_directory()
 		
 	def setup_datawell_directory(self):
+	
 		frame_path = "{d}/{start}_{end}".format(d=self.master_dir, start=self.ff, end=self.lf)
+		results_dict = {}
+		final_dict = {}
+				
 		try:
 			os.makedirs(frame_path)
 		except OSError:
@@ -31,9 +35,45 @@ class Datawell(object):
 			
 		os.chdir(frame_path)
 		self.run()
-		os.chdir(self.master_dir)
 
+		# Adding the frame number to the dictionary:
+		new_name = "{start} {end}".format(start=self.ff, end=self.lf)
+		results_dict['frame_number']=new_name
+		
+		# Adding information about whether the file was processed or not:
+		processed = os.path.exists('{a}/{b}'.format(a=frame_path,b='XDS_ASCII.HKL'))
+		results_dict['is_processed']=processed
+#NEW		
+		if processed:
+			matching = 'NUMBER OF ACCEPTED OBSERVATIONS (INCLUDING SYSTEMATIC ABSENCES'
+			with open('{a}/{b}'.format(a=frame_path, b='CORRECT.LP')) as file:
+				for line in file:
+					if matching in line:
+						value = re.search(r'\d+',line)
+#						results_dict['accepted_reflections']= int(value.group(0))
+						results_dict['accepted_reflections']= value.group(0)
+		else:
+			results_dict['accepted_reflections'] = None
+#NEW.END								
+								
+		# Addding information about whether the file was indexed or not:
+		def check():
+			if os.path.exists('{a}/{b}'.format(a=frame_path,b='XDS_ASCII.HKL')):
+				with open('{a}/{b}'.format(a=frame_path, b='IDXREF.LP')) as file:
+					lines = file.readlines()
+				text = '!!! ERROR'
+				for text in lines:
+					return False
+				else:
+					return True
+			return False
+										
+		results_dict['is_indexed']=check()
 
+		os.chdir(self.master_dir)	
+			
+		final_dict['{a}_{b}'.format(a=self.ff, b=self.lf)]=results_dict
+		return final_dict
 	
 	def run(self):
 		# run XDS in the datawell folder
