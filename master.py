@@ -1,4 +1,4 @@
-import os, sys, h5py
+import os, sys, h5py, json
 from datawell import Datawell
 
 
@@ -18,9 +18,11 @@ class Master(object):
 #		self.sg = args.spacegroup
 #		self.uc = args.unitcell
 
+#NEW:
+		self.master_dictionary = {}
+#NEW.END.
 
 		self.create_master_directory()
-
 
 	def create_master_directory(self):
 		try:
@@ -35,7 +37,7 @@ class Master(object):
 			else:
 				print("Successfully created the directory {}".format(dir_name))
 		except:
-			print("Something is not working. Check the code in 'Master.py'")
+			print("Something is not working. Check the code in 'master.py'")
 
 	def get_master_directory_path(self):
 		end_index = self.masterpath.find('_master.h5')
@@ -44,10 +46,18 @@ class Master(object):
 		return '{new_dir}/{name}'.format(new_dir = self.output, name = dir_name)
 
 	def create_and_run_Data_Wells(self):
-#		dir_path = self.get_master_directory_path()
 		for framenum in range(1,self.total_frames,self.frames_per_degree):
 			data_well = Datawell(framenum, framenum+self.frames_per_degree-1, self.get_master_directory_path(), self.masterpath, self.args)
-			data_well.setup_datawell_directory()
+			datawell_dict = data_well.setup_datawell_directory()
+			self.master_dictionary.update(datawell_dict)
+#			print(self.master_dictionary)
+		
+		# Writing a dictionalry into a file:
+		try:
+			with open(os.path.join('{}'.format(os.getcwd()),'DICTIONARY.json'), 'x') as file:
+				file.write(json.dumps(self.master_dictionary))
+		except FileExistsError:
+			print("File DICTIONARY already exist")
 
 def get_h5_file(path):
     try:
