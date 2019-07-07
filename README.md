@@ -10,3 +10,5 @@ next target:
 [nnk28@lnx201 71_75]$ xdsstat > XDSSTAT.LP <<eof
 > XDS_ASCII.HKL
 > eof
+
+extract the Iobs/sigma from XDSSTAT.LP and add as a dictionary key called "IsigI" to datawell
