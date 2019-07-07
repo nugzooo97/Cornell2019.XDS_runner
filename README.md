@@ -5,3 +5,8 @@ Contain ALL 4 files to run XDS:
 2) master.py
 3) datawell.py
 4) generate_xds.py
+
+next target:
+[nnk28@lnx201 71_75]$ xdsstat > XDSSTAT.LP <<eof
+> XDS_ASCII.HKL
+> eof
