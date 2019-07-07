@@ -42,6 +42,7 @@ def main():
 
 			master_class = master.Master(args, masterpath, totalframes)
 			master_class.create_and_run_Data_Wells()
+			#write master dictionary to DICTIONARY.json
 		# We just generated empty directory(ies) named with respect to the master(s) files,
 		# AND returned the path to these directories
 	time2 = time.time()

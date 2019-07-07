@@ -48,10 +48,12 @@ class Master(object):
 	def create_and_run_Data_Wells(self):
 		for framenum in range(1,self.total_frames,self.frames_per_degree):
 			data_well = Datawell(framenum, framenum+self.frames_per_degree-1, self.get_master_directory_path(), self.masterpath, self.args)
-			datawell_dict = data_well.setup_datawell_directory()
+			data_well.setup_datawell_directory()
+			data_well.run()
+			datawell_dict=generate_datawell_dict()
 			self.master_dictionary.update(datawell_dict)
 #			print(self.master_dictionary)
-		
+
 		# Writing a dictionalry into a file:
 		try:
 			with open(os.path.join('{}'.format(os.getcwd()),'DICTIONARY.json'), 'x') as file:
